@@ -1,0 +1,39 @@
+{% extends "index/base.html" %}
+{% block content %}
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-1">
+        <h1>{{title}}</h1>
+    </div>
+    <div class="col-aut ml-md-auto">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-info" onclick="location.href='{% url 'freezer' %}'">Freezer</button>
+                <button type="button" class="btn btn-info" onclick="location.href='{% url 'fridge' %}'">Fridge</button>
+                <button type="button" class="btn btn-info" onclick="location.href='{% url 'dry' %}'">Dry</button>
+            </div>
+
+        </div>
+    </div>
+            <div class="row">
+        {% if food %}
+            {% for food in food|dictsort:"expiredate" %}
+                
+                <article class="media content-section">            
+                    <div class="media-body">
+                        <div class="article-metadata">
+                            <a class="txt">Expireing: {{ food.expiredate|date:"d F, Y" }}</a>
+                        </div>
+                        {% for ingredient in ingredient %}
+                            {% if ingredient.EAN == food.EAN%}
+                                <h2><a class="txt">{{ ingredient.ingredient|capfirst  }}</a></h2>
+                            {% endif %}
+                        {% endfor %}
+                        <small class="txt">Amount left: {{ food.amount }}</small>
+                    </div>
+                </article>
+            
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>        
+{% endblock content %}

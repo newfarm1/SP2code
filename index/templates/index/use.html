@@ -1,0 +1,45 @@
+{% extends "index/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <h1>{{title}}</h1>
+        <form method="POST">
+            {% csrf_token %}  
+            {% crispy form %}
+        </form>
+    </div>
+    {% if tomuch %}
+        <div class="col-md-6">
+            <h4>Error, cant use more then stored</h4>
+            {% for item in item %}
+            <article class="media content-section">       
+                <div class="media-body">
+                    <div class="article-metadata">
+                        Item in question: {{ item.ingredient|capfirst }}
+                        <h4 class="txt">Amount tried to use: {{ amount }}</h4>
+                    </div>
+                    <h4><a class="txt">Amount left: {{ tomuch }}</a></h4>
+                </div>
+            </article>
+        {% endfor %}
+    {% elif ok %}
+        <div class="col-md-6">
+            <h4>Use complete</h4>
+            {% for item in item %}
+                <article class="media content-section">       
+                    <div class="media-body">
+                        <div class="article-metadata">
+                            Item in question: {{ item.ingredient|capfirst }}
+                            <h4 class="txt">Amount used: {{ amount }}</h4>
+                        </div>
+                        <h4>              
+                            <a class="txt">Amount left: {{ ok }}</a>
+                        </h4>
+                    </div>
+                </article>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

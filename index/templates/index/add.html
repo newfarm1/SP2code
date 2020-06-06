@@ -1,0 +1,35 @@
+{% extends "index/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="col-md-8">
+    <h1>{{ title }}</h1>
+    {% if new %}
+    <div>
+      <h2 class="text-left"> {{ new }} </h2>
+    </div>
+    {% endif %}
+    <form method="POST">
+      {% csrf_token %}
+      {% crispy form %}
+    </form>
+    {% if check %}
+    <h2 class="txt">Your current storage of the same item</h2>
+    <div class="row">
+    {% for check in check|dictsort:"id" %}
+        <article class="media content-section">            
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="txt" href="#">Expireing: {{ check.expiredate|date:"d F, Y" }}</a>
+                </div>
+                {% for ingredient in ingredient %}
+                  <h2><a class="txt">{{ ingredient.ingredient|capfirst  }}</a></h2>
+                {% endfor %}
+                <small class="txt">Amount left: {{ check.amount }}</small>
+            </div>
+        </article>
+    {% endfor %}
+  </div>
+{% endif %}
+</div>
+{% endblock content %}

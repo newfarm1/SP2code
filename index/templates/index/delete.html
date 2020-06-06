@@ -1,0 +1,137 @@
+{% extends "index/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{%  if reload %}
+<meta http-equiv="refresh" content="5; {% url 'delete' %}"/> <!-- 5 sec delay-->
+<h1>The follwoing item has been deleted </h1>
+<h2>Redirecting in 5 seconds...</h2>
+{% endif %}
+
+{% if item %}
+    {% if confirm %}
+    <h1>Are you sure you want to delete?</h1>
+    {% endif %}
+    <div class="col-md-6">
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="txt">Expireing: {{ item.expiredate|date:"d F, Y" }}</a>
+                </div>
+                {% for ingredient in ingredient %}
+                    {% if ingredient.EAN == item.EAN%}
+                        <h2><a class="txt">{{ ingredient.ingredient|capfirst  }}</a></h2>
+                    {% endif %}
+                {% endfor %}
+                <small class="txt">Amount left: {{ item.amount }}</small>
+            </div>
+        </article>
+        {% if confirm %}
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-primary" onclick="location.href='{% url 'deleted' 'confirmed' storage item.id %}'">Confirm</button>
+                <button type="button" class="btn btn-secondary" onclick="location.href='{% url 'delete' %}'">Cancle</button>
+            </div>
+    {% endif %}
+    </div>
+{% else %}
+<div class="col-md-12">
+    <h2>Search for the item you want to delete</h2>
+    <form method="POST">
+        {% csrf_token %}  
+        {% crispy form %}
+    </form>
+    <div class="row">
+    {% if fridge %}
+    <div class="col-md-4">
+        <h4>Stored in the fridge</h4>
+        {% for fridge in fridge %}
+            {% for i in fridge %}
+                {% if i.expiredate <= today %}
+                    <article class="media content-section-4">
+                {% elif i.expiredate <= three %}
+                    <article class="media content-section-3">
+                {% elif i.expiredate <= five %}
+                    <article class="media content-section-2">
+                {% else %}
+                    <article class="media content-section">
+                {% endif %}          
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="txt">Expireing: {{ i.expiredate|date:"d F, Y" }}</a>
+                    </div>
+                    {% for ingredient in ingredient %}
+                        {% if ingredient.EAN == i.EAN%}
+                            <h2><a class="txt" href="{% url 'delete_confitmation' 'fridge' i.id %}">{{ ingredient.ingredient|capfirst  }}</a></h2>
+                        {% endif %}
+                    {% endfor %}
+                    <small class="txt">Amount left: {{ i.amount }}</small>
+                </div>
+            </article>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+</div>
+{% if freezer %}
+<div class="col-md-4">
+<h4>Stored in the freezer</h4>
+    {% for freezer in freezer %}
+        {% for i in freezer %}
+            {% if i.expiredate <= today %}
+        <article class="media content-section-4">
+            {% elif i.expiredate <= three %}
+        <article class="media content-section-3">
+            {% elif i.expiredate <= five %}
+        <article class="media content-section-2">
+            {% else %}
+        <article class="media content-section">
+            {% endif %}           
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="txt">Expireing: {{ i.expiredate|date:"d F, Y" }}</a>
+                </div>
+                {% for ingredient in ingredient %}
+                    {% if ingredient.EAN == i.EAN%}
+                        <h2><a class="txt" href="{% url 'delete_confitmation' 'freezer' i.id %}">{{ ingredient.ingredient|capfirst  }}</a></h2>
+                    {% endif %}
+                {% endfor %}
+                <small class="txt">Amount left: {{ i.amount }}</small>
+            </div>
+        </article>
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+</div>
+{% if dry %}
+<div class="col-md-4">
+<h4>Stored dry</h4>
+{% for dry in dry %}
+    {% for i in dry %}
+        {% if i.expiredate <= today %}
+    <article class="media content-section-4">
+        {% elif i.expiredate <= three %}
+    <article class="media content-section-3">
+        {% elif i.expiredate <= five %}
+    <article class="media content-section-2">
+        {% else %}
+    <article class="media content-section">
+        {% endif %}            
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="txt">Expireing: {{ i.expiredate|date:"d F, Y" }}</a>
+            </div>
+            {% for ingredient in ingredient %}
+                {% if ingredient.EAN == i.EAN%}
+                    <h2><a class="txt" href="{% url 'delete_confitmation' 'dry' i.id %}">{{ ingredient.ingredient|capfirst  }}</a></h2>
+                {% endif %}
+            {% endfor %}
+            <small class="txt">Amount left: {{ i.amount }}</small>
+        </div>
+    </article>
+{% endfor %}
+{% endfor %}
+{% endif %}
+</div>
+{% endif %}
+</div>
+</div>
+{% endblock content %}

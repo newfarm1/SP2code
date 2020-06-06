@@ -1,0 +1,126 @@
+{% extends "index/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="row">
+            {% for expire in expire|dictsort:"expiredate" %}
+                {% if expire.expiredate <= today %}
+                    <article class="media content-section-4">
+                {% elif expire.expiredate <= three %}
+                    <article class="media content-section-3">
+                {% elif expire.expiredate <= five %}
+                    <article class="media content-section-2">
+                {% else %}
+                    <article class="media content-section">
+                {% endif %}
+                        <div class="media-body">
+                            <div class="article-metadata">
+                                <a class="txt">Expireing: {{ expire.expiredate|date:"d F, Y" }}</a>
+                            </div>
+                            {% for ingredient in ingredient %}
+                                {% if ingredient.EAN == expire.EAN%}
+                                    <h2><a class="txt">{{ ingredient.ingredient|capfirst  }}</a></h2>
+                                {% endif %}
+                            {% endfor %}
+                            <small class="txt">Amount left: {{ expire.amount }}</small>
+                        </div>
+                    </article>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h2>Search for an item</h2>
+        <form method="POST">
+            {% csrf_token %}  
+            {% crispy form %}
+        </form>
+        {% if fridge %}
+            <h3>Stored in the fridge</h3>
+            {% for fridge in fridge %}
+                {% for i in fridge %}
+                    {% if i.expiredate <= today %}
+                        <article class="media content-section-4">
+                    {% elif i.expiredate <= three %}
+                        <article class="media content-section-3">
+                    {% elif i.expiredate <= five %}
+                        <article class="media content-section-2">
+                    {% else %}
+                        <article class="media content-section">
+                    {% endif %}          
+                    <div class="media-body">
+                        <div class="article-metadata">
+                            <a class="txt">Expireing: {{ i.expiredate|date:"d F, Y" }}</a>
+                        </div>
+                        {% for ingredient in ingredient %}
+                            {% if ingredient.EAN == i.EAN%}
+                                <h2><a class="txt" href>{{ ingredient.ingredient|capfirst  }}</a></h2>
+                            {% endif %}
+                        {% endfor %}
+                        <small class="txt">Amount left: {{ i.amount }}</small>
+                    </div>
+                </article>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    {% if freezer %}
+    <h3>Stored in the freezer</h3>
+        {% for freezer in freezer %}
+            {% for i in freezer %}
+                {% if i.expiredate <= today %}
+            <article class="media content-section-4">
+                {% elif i.expiredate <= three %}
+            <article class="media content-section-3">
+                {% elif i.expiredate <= five %}
+            <article class="media content-section-2">
+                {% else %}
+            <article class="media content-section">
+                {% endif %}           
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="txt">Expireing: {{ i.expiredate|date:"d F, Y" }}</a>
+                    </div>
+                    {% for ingredient in ingredient %}
+                        {% if ingredient.EAN == i.EAN%}
+                            <h2><a class="txt">{{ ingredient.ingredient|capfirst  }}</a></h2>
+                        {% endif %}
+                    {% endfor %}
+                    <small class="txt">Amount left: {{ i.amount }}</small>
+                </div>
+            </article>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+{% if dry %}
+    <h3>Stored dry</h3>
+    {% for dry in dry %}
+        {% for i in dry %}
+            {% if i.expiredate <= today %}
+        <article class="media content-section-4">
+            {% elif i.expiredate <= three %}
+        <article class="media content-section-3">
+            {% elif i.expiredate <= five %}
+        <article class="media content-section-2">
+            {% else %}
+        <article class="media content-section">
+            {% endif %}            
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="txt">Expireing: {{ i.expiredate|date:"d F, Y" }}</a>
+                </div>
+                {% for ingredient in ingredient %}
+                    {% if ingredient.EAN == i.EAN%}
+                        <h2><a class="txt">{{ ingredient.ingredient|capfirst  }}</a></h2>
+                    {% endif %}
+                {% endfor %}
+                <small class="txt">Amount left: {{ i.amount }}</small>
+            </div>
+        </article>
+    {% endfor %}
+    {% endfor %}
+{% endif %}
+</div>
+</div>
+
+
+{% endblock content %}
